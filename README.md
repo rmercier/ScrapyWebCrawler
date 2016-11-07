@@ -15,6 +15,12 @@ WebCrawling using scrapy
  Conda = "conda install scrapy"
  Virtualenv = "pip install scrapy"
  
-2) 
+
+- How to Run
+
+1) scrapy crawl NAME_OF_SPIDER
+  Exemple : scrapy crawl theatre
+  
+Files are in output directory
 
 
