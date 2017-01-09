@@ -88,5 +88,9 @@ ITEM_PIPELINES = {'scrapy.pipelines.images.ImagesPipeline': 1}
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
+AWS_ACCESS_KEY_ID = 'AKIAI5G2WOHW3EW3FEVA'
+AWS_SECRET_ACCESS_KEY = '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'
 
-IMAGES_STORE = "C:/Users/romai/Miniconda3/envs/VENV/theatres/output"
+IMAGES_STORE = 's3://img-sail/images'
+IMAGES_STORE_S3_ACL = 'public-read'
+#IMAGES_STORE = "C:\\Users\\Ed\\Desktop\\Sail"

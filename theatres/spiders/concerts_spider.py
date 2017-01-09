@@ -3,32 +3,33 @@ from theatres.items import PlaceCover
 from theatres.items import EventCover
 
 from theatres.parseTransport import parseTransport
-from theatres.getGPS import get_coordonates
 
-class TheatreSpider(scrapy.Spider):
-    name = 'theatre'
+class ConcertSpider(scrapy.Spider):
+    name = 'concert'
 
-    start_urls = ['http://www.offi.fr/theatre']
+    start_urls = ['http://www.offi.fr/concerts/salles-de-concert-paris.html']
 
     def parse(self, response):
         # follow links to threatres infos pages
-        for href in response.css('#ListeTheatre a::attr(href)').extract():
-            yield scrapy.Request(response.urljoin(href), callback=self.parse_theater)
+        for href in response.css('#content table tr td:first-of-type a::attr(href)').extract():
+            yield scrapy.Request(response.urljoin(href), callback=self.parse_concert)
 
     #Theatre
-    def parse_theater(self, response):
+    def parse_concert(self, response):
         events = []
 
-        content = response.css('#content')
+        content = response.css('#content .detailSummary_full')
         #Parse telephone
         telephone = content.css('[itemprop=telephone]::text').extract_first()
-        telephone = telephone.split(' ')[0]
+        if telephone == None:
+            telephone = ""
+        else:
+            telephone = telephone.split(' ')[0]
 
         #GET position
         position = dict()
         address = dict()
-        street = content.css('[itemprop=streetAddress]::text').extract_first()
-        address['street'] = street
+        address['street'] = content.css('[itemprop=streetAddress]::text').extract_first()
         address['postalCode'] = content.css('[itemprop=postalCode]::text').extract_first()
         address['city'] = content.css('[itemprop=addressLocality]::text').extract_first()
         position['address'] = address
@@ -39,7 +40,7 @@ class TheatreSpider(scrapy.Spider):
         gps['lng'] = content.css('[itemprop=longitude]::attr(content)').extract_first()
         position['gps'] = gps
 
-        for eventHREF in response.css('#tabs-prog .eventTitle a::attr(href)').extract():
+        for eventHREF in response.css('.tabsLieu-concerts .eventTitle a::attr(href)').extract():
             events.append(eventHREF)
 
         #GET IMAGES
@@ -51,9 +52,9 @@ class TheatreSpider(scrapy.Spider):
             name = content.css('h1 span::text').extract_first(),
             phone = telephone,
             website = content.css('[itemprop=url]::text').extract_first(),
-            mtype = "theatre",
+            mtype = "concert",
             position = position,
-            description = content.css('[itemprop=description]::text').extract_first(),
+            description = content.css('[itemprop=description] p::text').extract_first(),
             events = events,
             image_urls = [imageURL]
         )

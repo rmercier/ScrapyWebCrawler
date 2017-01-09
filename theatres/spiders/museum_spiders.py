@@ -58,4 +58,4 @@ class MuseumSpider(scrapy.Spider):
             position = position,
             description = content.css('[itemprop=description]::text').extract_first(),
         	image_urls=[imageURL]
-            )
+        )
